@@ -1,0 +1,14 @@
+{
+  "name": "travel-planner-app",
+  "version": "1.0.0",
+  "description": "A travel app that obtains a desired trip location & date from the user, and displays weather and an image of the location using information obtained from external APIs.",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest --no-cache --verbose",
+    "start": "node src/server/server.js",
+    "dev": "webpack-dev-server --config webpack.dev.js --open",
+    "build": "webpack --config webpack.prod.js"
+  },
+  "author": "Harsh-Raj",
+  "license": "MIT"
+}
