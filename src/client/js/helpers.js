@@ -11,7 +11,7 @@ export const showErrorMessage = msg => {
   errMsgPopup.classList.add('active');
 }
 
-export const showToDoListPopup = indexNr => {
+export const showToDoList = indexNr => {
 
   const toDoListPopup = document.getElementById('to-do-list');
   toDoListPopup.querySelector('input[type="text"]').value = '';
@@ -19,7 +19,7 @@ export const showToDoListPopup = indexNr => {
   toDoListPopup.classList.add('active');
 }
 
-export const toggleTripCreateSection = (action = '') => {
+export const toggleTripCreate = (action = '') => {
 
   const tripCreateSection = document.getElementById('trip-create');
 

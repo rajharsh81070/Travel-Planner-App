@@ -9,8 +9,6 @@ export const formValidation = () => {
   const dateStart = document.getElementById('date-start');
   const dateEnd = document.getElementById('date-end');
 
-
-  // check the Current Location field
   if (location.value.length < 3) {
 
     location.classList.remove('valid');

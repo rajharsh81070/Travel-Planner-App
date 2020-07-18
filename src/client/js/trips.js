@@ -1,4 +1,4 @@
-import { createTripListBlock } from './createUI';
+import { createTripListBlock } from './updateUI';
 
 export const displayAllTrips = () => {
 

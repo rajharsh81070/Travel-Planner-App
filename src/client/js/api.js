@@ -1,7 +1,9 @@
-export const getCoordinatesAPI = async (city, country = '') => {
+const geonamesURL = 'http://api.geonames.org/searchJSON?q=';
 
-  const callUrl = `http://api.geonames.org/searchJSON?q=${city}&country=${country}&maxRows=3&username=nicojuhari`;
-  const res = await fetch(callUrl);
+export const geonamesAPI = async (city, country = '') => {
+
+  const url = geonamesURL + city + '&country=' + country + '&maxRows=2&username=h.v.raj3';
+  const res = await fetch('https://cors-anywhere.herokuapp.com/' + url);
   try {
     const data = await res.json();
 
@@ -16,14 +18,14 @@ export const getCoordinatesAPI = async (city, country = '') => {
 
 }
 
-export const getWeatherAPI = async (lat, lng, date = '') => {
+export const getWeatherAPI = async (lat, lng) => {
 
-  const DARK_SKY_SECRET_KEY = 'aff1f0a06b6fcb4d76f2fe8dad6bb0db';
-  const dateInSeconds = new Date(date) / 1000;
-  const callUrl = `https://api.darksky.net/forecast/${DARK_SKY_SECRET_KEY}/${lat},${lng},${dateInSeconds}`;
-  const res = await fetch(callUrl);
+  const API_WEATHERBIT_KEY = '09cc54108d1b44c3b506d124038ef679';
+  const url = `https://api.weatherbit.io/v2.0/forecast/daily?lat=${lat}&lon=${lng}&key=${API_WEATHERBIT_KEY}`;
+  const res = await fetch('https://cors-anywhere.herokuapp.com/' + url);
   try {
     const data = await res.json();
+    console.log(data);
     return data;
 
   } catch (err) {
@@ -37,9 +39,9 @@ export const getImageAPI = async (keyword) => {
   //replace the spaces with + sign;
   keyword = keyword.replace(/\s/g, '+');
 
-  const PIXABAY_API_KEY = '13896601-3770d09841443b05f99f90d2f';
+  const PIXABAY_API_KEY = '17532701-fe06d107daa4dfb6cf38ef0e7';
   const callUrl = `https://pixabay.com/api/?key=${PIXABAY_API_KEY}&q=${keyword}&image_type=photo&pretty=true`;
-  const res = await fetch(callUrl);
+  const res = await fetch('https://cors-anywhere.herokuapp.com/' + callUrl);
 
   try {
 

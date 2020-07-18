@@ -1,79 +1,51 @@
 import { formValidation } from './form';
-import { createNewTripHtml } from './createUI';
-import { scrollToSection, showToDoListPopup, toggleTripCreateSection, showErrorMessage } from './helpers';
-import { getDataFromAPIs, addMoreDestinations, saveNewTrip, updateForm } from './secNewTrip';
+import { createTrip } from './updateUI';
+import { scrollToSection, showToDoList, toggleTripCreate, showErrorMessage } from './helpers';
+import { getDataFromAPIs, addMoreDestinations, saveNewTrip, updateForm } from './newTrip';
 
-//this array will contain multi Object Destinations
-let newTripHolder = [];
+let trips = [];
 
+const createNewTrip = (data) => {
 
-const createNewTripBlock = (data) => {
+  const newTrip = document.getElementById('new-trip');
+  newTrip.innerHTML = '';
 
-  //DATA should be the newTripHolder
-
-  //get the DOM
-  const newTripBlock = document.getElementById('new-trip');
-  newTripBlock.innerHTML = '';
-
-  //display the newTripBlock in the browser
-  newTripBlock.appendChild(createNewTripHtml(data));
-
+  newTrip.appendChild(createTrip(data));
 }
 
 
-/* ========= */
-/* =========== START EXECUTION PART ============= */
-/* ========= */
-
 document.addEventListener('DOMContentLoaded', () => {
 
-  //get the DOM
   const searchBtn = document.getElementById('search');
-  const newTripBlock = document.getElementById('new-trip');
+  const newTrip = document.getElementById('new-trip');
   const popupCloseBtn = document.querySelectorAll('.js-popup-close');
   const saveToDoBtn = document.querySelector('.save-to-do');
   const navLink = document.querySelector('nav a');
-
-  // Event Listener: Click => on search button;
   searchBtn.addEventListener('click', () => {
-
-    //check if the button is not disabled
     if (!searchBtn.classList.contains('disabled')) {
       let userData = formValidation()
-      //check the form data(validation)
       if (userData) {
 
-        toggleTripCreateSection('loading'); // show loading gif
+        toggleTripCreate('loading');
         scrollToSection('trip-create');
 
-        //start to generate the data(from APIs)
         getDataFromAPIs(userData)
           .then(newTripDestination => {
-
             if (newTripDestination.error) {
-
-              toggleTripCreateSection() //hide the section
-              scrollToSection('trip-form'); //scroll back to form
+              toggleTripCreate();
+              scrollToSection('trip-form');
 
               showErrorMessage(newTripDestination.error);
 
-              //enable the search btn
               document.getElementById('search').classList.remove('disabled');
 
+            } else {
+              trips.push(newTripDestination);
+
+              createNewTrip(trips);
+              toggleTripCreate('active');
             }
-
-            else {
-
-              //add a new destination to tripHolder object
-              newTripHolder.push(newTripDestination);
-
-              createNewTripBlock(newTripHolder);
-              toggleTripCreateSection('active'); //show the content
-
-            }
-
           });
-
       }
     }
 
@@ -82,31 +54,24 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
 
-  // Event Listener: Click
-  newTripBlock.addEventListener('click', (event) => {
+  newTrip.addEventListener('click', (event) => {
 
-    // Click => Add More Destinations;
     if (event.target.getAttribute('id') == 'add-more-destination') {
-      addMoreDestinations(newTripHolder);
+      addMoreDestinations(trips);
     }
 
-    // Click => Save New Trip;
     if (event.target.getAttribute('id') == 'save-new-trip') {
-      if (saveNewTrip(newTripHolder)) newTripHolder = [];
+      if (saveNewTrip(trips)) trips = [];
     }
 
-    //Click => Open To Do List Popup
     if (event.target.classList.contains('add-to-do')) {
 
-      //get the Dest index in newTrip array
       const tripDestNr = event.target.closest('.new-dest-actions').getAttribute('data-dest-nr');
-      showToDoListPopup(tripDestNr);
+      showToDoList(tripDestNr);
     }
 
   }, true)
 
-
-  // Event Listener: Click => Close Pop up Message Block 
   popupCloseBtn.forEach(element => {
     element.addEventListener('click', function (event) {
       element.closest('.full-screen').classList.remove('active');
@@ -114,17 +79,15 @@ document.addEventListener('DOMContentLoaded', () => {
     }, true);
   });
 
-  // Event Listener: Click => Navigation link and scoll to All trips
   navLink.addEventListener('click', (event) => {
 
     event.preventDefault();
     scrollToSection(event.target.dataset.nav);
   });
 
-  // Event Listener: Click => Save To DO List
   saveToDoBtn.addEventListener('click', function (event) {
-    newTripHolder = saveToDoList(newTripHolder);
-    createNewTripBlock(newTripHolder);
+    trips = saveToDoList(trips);
+    createNewTrip(trips);
   }, true);
 
 });
@@ -142,9 +105,5 @@ const saveToDoList = (data) => {
 
   }
 
-  //return modified newTripHolder
   return data;
-
-
-
 }

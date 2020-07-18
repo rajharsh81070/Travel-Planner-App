@@ -1,17 +1,17 @@
 import { daysDifference, fahrenheitToCelsius } from "./helpers";
 
-export const createNewTripHtml = (allNewTrip) => {
+export const createTrip = (newTrip) => {
 
-  let content = '';
-  let itr = 0;
+    let content = '';
+    let itr = 0;
 
-  var newTripLocationBlock = document.createElement('div');
-  newTripLocationBlock.classList.add('trip__block');
+    var newTripLocationBlock = document.createElement('div');
+    newTripLocationBlock.classList.add('trip__block');
 
 
-  for (let dest of allNewTrip) {
+    for (let dest of newTrip) {
 
-    content += `<div class="trip__destination">
+        content += `<div class="trip__destination">
                         <div class="loc__image" ${ dest.image != false ? 'style="background-image: url(' + dest.image + ')"' : ``}></div>
                         <div class="loc__info">
                             <h2 class="loc__name">
@@ -36,7 +36,7 @@ export const createNewTripHtml = (allNewTrip) => {
                                 <div class="weather__title">Weather forecast:</div>
                                 <div class="weather__content">
                                     <div class="weather__icon">
-                                        <img src="https://darksky.net/images/weather-icons/${dest.weather.icon}.png"/>
+                                        <img src="src/client/assests/icons/${dest.weather.icon}.png"/>
                                     </div>
                                     <div class="weather__info">
                                         <div class="weather__data"><span>${fahrenheitToCelsius(dest.weather.temperatureMax)}</span> &deg;C</div>
@@ -50,7 +50,7 @@ export const createNewTripHtml = (allNewTrip) => {
                                                                 ${ dest.toDoList.map(item => '<span class="todo__item">' + item + '</span>').join('')}
                                                             </div>
                                                         </div>`
-        : ``}
+                : ``}
                         </div>
                         <div class="new-dest-actions" data-dest-nr="${itr}">
                             <div class="add-to-do" title="Add To Do List">
@@ -58,10 +58,10 @@ export const createNewTripHtml = (allNewTrip) => {
                             </div>
                         </div>
                     </div>`;
-    itr++;
-  }
+        itr++;
+    }
 
-  content += `<div id="new-trip-actions" class="trip__actions">
+    content += `<div id="new-trip-actions" class="trip__actions">
                         <div class="nt-btn add-more">
                             <div id="add-more-destination" class="add-more-icon">+</div>
                             <p>Add More Destinations</p>
@@ -73,32 +73,32 @@ export const createNewTripHtml = (allNewTrip) => {
                     </div>`;
 
 
-  newTripLocationBlock.innerHTML = content;
+    newTripLocationBlock.innerHTML = content;
 
 
-  return newTripLocationBlock;
+    return newTripLocationBlock;
 }
 
 export const createTripListBlock = (trips = '') => {
 
-  let content = '';
-  const newTripListBlock = document.createElement('div');
-  newTripListBlock.classList.add('all-trips');
+    let content = '';
+    const newTripListBlock = document.createElement('div');
+    newTripListBlock.classList.add('all-trips');
 
-  let itr = 0;
-  for (let trip of trips) {
+    let itr = 0;
+    for (let trip of trips) {
 
-    let daysLeft = daysDifference(new Date(), trip[0].dateStart);
-    content += `<div class="trip-container" data-trip-nr="${itr}">
+        let daysLeft = daysDifference(new Date(), trip[0].dateStart);
+        content += `<div class="trip-container" data-trip-nr="${itr}">
                         <div class="trip-container__header">
                             <h4 class="trip-container__title"><span class="num-icon">${trip.length}</span> destination${trip.length > 1 ? 's' : ''}</h4>
                             <div class="trip-container__remain">Trip will start in <span class="num-icon">${daysLeft}</span> days</div>
                         </div>
                     <div class="trip__block">`;
 
-    for (var dest of trip) {
+        for (var dest of trip) {
 
-      content += `<div class="trip__destination">
+            content += `<div class="trip__destination">
             <div class="loc__image" ${ dest.image != false ? 'style="background-image: url(' + dest.image + ')"' : ``}></div>
             <div class="loc__info">
                 <h2 class="loc__name">
@@ -123,7 +123,7 @@ export const createTripListBlock = (trips = '') => {
                     <div class="weather__title">Weather forecast:</div>
                     <div class="weather__content">
                         <div class="weather__icon">
-                            <img src="https://darksky.net/images/weather-icons/${dest.weather.icon}.png"/>
+                            <img src="src/client/assests/icons/${dest.weather.icon}.png"/>
                         </div>
                         <div class="weather__info">
                             <div class="weather__data"><span>${fahrenheitToCelsius(dest.weather.temperatureMax)}</span> &deg;C</div>
@@ -137,21 +137,21 @@ export const createTripListBlock = (trips = '') => {
                                                     ${ dest.toDoList.map(item => '<span class="todo__item">' + item + '</span>').join('')}
                                                 </div>
                                             </div>`
-          : ``}
+                    : ``}
             </div>
         </div>`;
 
-    }
-    content += `</div>
+        }
+        content += `</div>
                     <div class="trip-container__actions">
                         <div class="action-btn remove-trip" data-trip-nr="${itr}" title="Remove The Trip"></div>
                     </div>
         
                     </div>`; //end trip-container
 
-    itr++; //increment
-  }
+        itr++; //increment
+    }
 
-  newTripListBlock.innerHTML = content;
-  return newTripListBlock;
+    newTripListBlock.innerHTML = content;
+    return newTripListBlock;
 }

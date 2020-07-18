@@ -1,25 +1,24 @@
-import { getCoordinatesAPI, getWeatherAPI, getImageAPI } from './api';
+import { geonamesAPI, getWeatherAPI, getImageAPI } from './api';
 import { scrollToSection } from './helpers';
-import { displayAllTrips } from './secTripList';
+import { displayAllTrips } from './trips';
 
-export const getDataFromAPIs = async (userData) => {
-  let newTrip = {}
+export const getDataFromAPIs = async (data) => {
+  let trip = {}
 
-  newTrip.dateStart = userData.dateStart;
-  newTrip.dateEnd = userData.dateEnd;
-  newTrip.toDoList = [];
-  newTrip.error = '';
+  trip.dateStart = data.dateStart;
+  trip.dateEnd = data.dateEnd;
+  trip.toDoList = [];
+  trip.error = '';
 
-  // get Current Location Coordinates
-  await getCoordinatesAPI(userData.location)
+  await geonamesAPI(data.location)
     .then(resLocation => {
       if (resLocation.error) {
 
-        newTrip.error = resLocation.error;
+        trip.error = resLocation.error;
       }
       else {
 
-        newTrip.location = {
+        trip.location = {
           city: resLocation.geonames[0].toponymName,
           lat: resLocation.geonames[0].lat,
           lng: resLocation.geonames[0].lng
@@ -29,16 +28,16 @@ export const getDataFromAPIs = async (userData) => {
     });
 
   // get Destination Coordinates
-  await getCoordinatesAPI(userData.destination)
+  await geonamesAPI(data.destination)
     .then(resDestination => {
 
       if (resDestination.error) {
-        newTrip.error = resDestination.error;
+        trip.error = resDestination.error;
       }
       else {
 
         // add the Destination info to the object
-        newTrip.destination = {
+        trip.destination = {
           city: resDestination.geonames[0].toponymName,
           country: resDestination.geonames[0].countryName,
           lat: resDestination.geonames[0].lat,
@@ -47,44 +46,46 @@ export const getDataFromAPIs = async (userData) => {
       }
     })
 
-  if (newTrip.error == '') {
+  if (trip.error === '') {
 
     //get the Weather by Destination Coords and DateStart
-    await getWeatherAPI(newTrip.destination.lat, newTrip.destination.lng, userData.dateStart)
+    await getWeatherAPI(trip.destination.lat, trip.destination.lng)
       .then(resWeather => {
-
-        // add the Weather info to the object
-        newTrip.weather = {
-          temperatureMax: resWeather.daily.data[0].temperatureMax,
-          temperatureMin: resWeather.daily.data[0].temperatureMin,
-          summary: resWeather.daily.data[0].summary,
-          icon: resWeather.daily.data[0].icon
+        const onDate = resWeather.data.find(res => res.datetime === data.dateStart);
+        if (onDate) {
+          trip.weather = {
+            temperatureMax: onDate.max_temp,
+            temperatureMin: onDate.min_temp,
+            summary: onDate.weather.description,
+            icon: onDate.weather.icon
+          }
         }
+
 
       })
 
 
     //get the Image by Destination City
-    await getImageAPI(newTrip.destination.city)
+    await getImageAPI(trip.destination.city)
       .then(cityImg => {
 
         //Image found by Destination City Name
         if (cityImg.totalHits > 0) {
-          newTrip.image = cityImg.hits[0].largeImageURL;
+          trip.image = cityImg.hits[0].largeImageURL;
         }
         else {
           //Image not found
           //Send another API request to get the Image by Destination Country Name
-          getImageAPI(newTrip.destination.country)
+          getImageAPI(trip.destination.country)
             .then(countryImg => {
 
               //image found
               if (countryImg.totalHits > 0) {
-                newTrip.image = countryImg.hits[0].largeImageURL
+                trip.image = countryImg.hits[0].largeImageURL
               }
               else {
                 // the Image Placeholder will be added instead
-                newTrip.image = false;
+                trip.image = false;
               }
             })
         }
@@ -94,14 +95,14 @@ export const getDataFromAPIs = async (userData) => {
 
   }
 
-  return newTrip;
+  return trip;
 
 }
 
-export const addMoreDestinations = (newTripHolder) => {
+export const addMoreDestinations = (trips) => {
 
-  //clone the newTripHolder array/pbject
-  const newData = newTripHolder.slice();
+  //clone the trips array/pbject
+  const newData = trips.slice();
 
   //get the DOM
   const location = document.getElementById('location');
@@ -112,7 +113,7 @@ export const addMoreDestinations = (newTripHolder) => {
   //reverse the array
   const lastDestination = newData.reverse()[0];
 
-  //get the Last destination from the newTripHolder
+  //get the Last destination from the trips
   const lastDateEnd = lastDestination.dateEnd;
   const lastDestinationCity = lastDestination.destination.city;
 
@@ -138,7 +139,7 @@ export const addMoreDestinations = (newTripHolder) => {
 
 }
 
-export const saveNewTrip = (newTripHolder) => {
+export const saveNewTrip = (trips) => {
 
   //check if the LocalStorage is supported by User's Browser
   if (window.localStorage !== undefined) {
@@ -146,9 +147,9 @@ export const saveNewTrip = (newTripHolder) => {
     let newTPcapstone = [];
 
     if (localStorage.getItem('tp_capstone')) {
-      newTPcapstone = [...JSON.parse(localStorage.getItem('tp_capstone')), newTripHolder]
+      newTPcapstone = [...JSON.parse(localStorage.getItem('tp_capstone')), trips]
     } else {
-      newTPcapstone = [newTripHolder];
+      newTPcapstone = [trips];
     }
 
     //add the trip to LocalStorage
