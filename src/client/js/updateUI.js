@@ -36,7 +36,7 @@ export const createTrip = (newTrip) => {
                                 <div class="weather__title">Weather forecast:</div>
                                 <div class="weather__content">
                                     <div class="weather__icon">
-                                        <img src="src/client/assests/icons/${dest.weather.icon}.png"/>
+                                        <img src="https://www.weatherbit.io/static/img/icons/${dest.weather.icon}.png"/>
                                     </div>
                                     <div class="weather__info">
                                         <div class="weather__data"><span>${fahrenheitToCelsius(dest.weather.temperatureMax)}</span> &deg;C</div>
@@ -123,7 +123,7 @@ export const createTripListBlock = (trips = '') => {
                     <div class="weather__title">Weather forecast:</div>
                     <div class="weather__content">
                         <div class="weather__icon">
-                            <img src="src/client/assests/icons/${dest.weather.icon}.png"/>
+                            <img src="https://www.weatherbit.io/static/img/icons/${dest.weather.icon}.png"/>
                         </div>
                         <div class="weather__info">
                             <div class="weather__data"><span>${fahrenheitToCelsius(dest.weather.temperatureMax)}</span> &deg;C</div>
