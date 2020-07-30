@@ -1,7 +1,5 @@
 # Travel-Planner-App
 
-Capstone project for the Udacity Front-End NanoDegree.
-
 ## Project details
 
 Travel Planner App is a project that will record a trip starting date with the weather and an image for the location you intend to go.
